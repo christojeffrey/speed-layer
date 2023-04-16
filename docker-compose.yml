@@ -1,0 +1,121 @@
+# 1 listener for twitter streaming api and 1 listener for youtube streaming api. Each listener is also a kafka producer
+# 1 cluster of kafka with 2 brokers. 2 topics called twitter and youtube, each with 2 partitions(one for each broker)
+# spark streaming with 1 master and 2 workers
+# 1 postgresql database to store batch computed data from spark
+# 1 rest api server for reading from postgresql
+
+services:
+  twitter:
+    container_name: twitter
+    image: twitter
+    # build twitter.Dockerfile inside dockerfiles folder
+    build:
+      context: .
+      dockerfile: dockerfiles/twitter.Dockerfile
+    volumes:
+      - ./twitter:/app
+    depends_on:
+      - kafka
+  zookeeper:
+    container_name: zookeeper
+    image: bitnami/zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - "zookeeper_data:/bitnami"
+  kafka:
+    container_name: kafka
+    image: bitnami/kafka:latest
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "twitter:2:2,youtube:2:2"
+    volumes:
+      - "kafka_data:/bitnami"
+  spark-master:
+    container_name: spark-master
+    image: bitnami/spark:3.3.2
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    volumes:
+      - ./spark-apps:/opt/spark-apps
+      - ./spark-data:/opt/spark-data
+    environment:
+      - SPARK_MODE=master
+      - SPARK_LOCAL_IP=spark-master
+      - SPARK_WORKLOAD=master
+    depends_on:
+      - kafka
+      - postgres
+  spark-worker-a:
+    container_name: spark-worker-a
+    image: bitnami/spark:3.3.2
+    ports:
+      - "8090:8080"
+      - "7000:7000"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-a
+    volumes:
+      - ./spark-apps:/opt/spark-apps
+      - ./spark-data:/opt/spark-data
+  spark-worker-b:
+    container_name: spark-worker-b
+    image: bitnami/spark:3.3.2
+    ports:
+      - "8091:8080"
+      - "7001:7000"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-b
+    volumes:
+      - ./spark-apps:/opt/spark-apps
+      - ./spark-data:/opt/spark-data
+  postgres:
+    container_name: postgres
+
+    build:
+      context: .
+      dockerfile: dockerfiles/postgres.Dockerfile
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+  adminer:
+    container_name: adminer
+    image: adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local

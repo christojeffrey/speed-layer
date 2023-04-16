@@ -1,0 +1,5 @@
+# .venv folder
+.venv/
+
+# .env file from wherever folder
+.env
