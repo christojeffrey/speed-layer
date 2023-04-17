@@ -1,0 +1,19 @@
+[0;1;32m●[0m docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: [0;1;32mactive (running)[0m since Mon 2023-04-17 17:44:25 WIB; 10min ago
+     Docs: https://docs.docker.com
+ Main PID: 1740 (dockerd)
+    Tasks: 15
+   CGroup: /system.slice/docker.service
+           └─1740 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+Apr 17 17:44:19 bigdata dockerd[1740]: time="2023-04-17T17:44:19.655590199+07:00" level=info msg="[graphdriver] using prior storage driver: overlay2"
+Apr 17 17:44:20 bigdata dockerd[1740]: time="2023-04-17T17:44:20.529694246+07:00" level=info msg="Loading containers: start."
+Apr 17 17:44:23 bigdata dockerd[1740]: time="2023-04-17T17:44:23.122622694+07:00" level=info msg="Default bridge (docker0) is assigned with an IP address 172.17.0.0/16. Daemon option --bip can be used to set a preferred IP address"
+Apr 17 17:44:23 bigdata dockerd[1740]: time="2023-04-17T17:44:23.798956957+07:00" level=info msg="Loading containers: done."
+Apr 17 17:44:24 bigdata dockerd[1740]: time="2023-04-17T17:44:24.305763145+07:00" level=warning msg="WARNING: No swap limit support"
+Apr 17 17:44:24 bigdata dockerd[1740]: time="2023-04-17T17:44:24.307287147+07:00" level=info msg="Docker daemon" commit=59118bf graphdriver=overlay2 version=23.0.3
+Apr 17 17:44:24 bigdata dockerd[1740]: time="2023-04-17T17:44:24.311798102+07:00" level=info msg="Daemon has completed initialization"
+Apr 17 17:44:25 bigdata dockerd[1740]: time="2023-04-17T17:44:25.212838350+07:00" level=info msg="[core] [Server #7] Server created" module=grpc
+Apr 17 17:44:25 bigdata systemd[1]: Started Docker Application Container Engine.
+Apr 17 17:44:25 bigdata dockerd[1740]: time="2023-04-17T17:44:25.244566364+07:00" level=info msg="API listen on /run/docker.sock"
