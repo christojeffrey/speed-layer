@@ -34,9 +34,9 @@ def get_stream(URL):
                 post_to_kafka(line)
 
 def post_to_kafka(value):
-    producer.send('twitter', value=value)
+    producer.send('streaming', value=value)
     # flush to make sure all messages are sent. forcing it to be synchronous
     producer.flush()
-    print("posted to kafka")
+    # print("posted to kafka")
 
 get_stream(URL)

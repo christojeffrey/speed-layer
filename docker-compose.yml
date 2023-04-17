@@ -36,7 +36,7 @@ services:
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "twitter:2:2,youtube:2:2"
+      KAFKA_CREATE_TOPICS: "streaming:2:2"
     volumes:
       - "kafka_data:/bitnami"
   spark-master:
@@ -47,7 +47,6 @@ services:
       - "7077:7077"
     volumes:
       - ./spark-apps:/opt/spark-apps
-      - ./spark-data:/opt/spark-data
     environment:
       - SPARK_MODE=master
       - SPARK_LOCAL_IP=spark-master
@@ -74,7 +73,6 @@ services:
       - SPARK_LOCAL_IP=spark-worker-a
     volumes:
       - ./spark-apps:/opt/spark-apps
-      - ./spark-data:/opt/spark-data
   spark-worker-b:
     container_name: spark-worker-b
     image: bitnami/spark:3.3.2
@@ -94,7 +92,6 @@ services:
       - SPARK_LOCAL_IP=spark-worker-b
     volumes:
       - ./spark-apps:/opt/spark-apps
-      - ./spark-data:/opt/spark-data
   postgres:
     container_name: postgres
     build:
