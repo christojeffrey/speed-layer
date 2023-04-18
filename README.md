@@ -7,11 +7,13 @@ check if kafka got the data using this command
 
 how to run in spark
 
+open spark terminal in docker using
+`docker exec -it spark-master bash`
+
 first, install kafka using
 `pip install kafka-python`
 
 then, run the spark job using
 `$SPARK_HOME/bin/spark-submit /opt/spark-apps/main.py`
-
-need certain package, so use this to run the spark job with the package
+this resulted in error. because we need certain package, so use this to run the spark job with the package
 `$SPARK_HOME/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.0 /opt/spark-apps/main.py`
