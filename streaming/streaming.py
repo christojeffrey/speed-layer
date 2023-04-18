@@ -41,6 +41,7 @@ def get_stream(URL):
                 # pass to kafka as byte
                 post_to_kafka(dumps(currentObject).encode('utf-8'))
             elif event == 'string':
+                # possible improvement: handle nested prefix. like item.user.name (split by .)
                 currentObject[prefix] = value
                 print("nambah")
           

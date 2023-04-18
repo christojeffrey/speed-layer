@@ -3,6 +3,7 @@
 # imprt spark
 from pyspark.sql import SparkSession
 import time
+import json
 spark = SparkSession.builder.appName("spark batch app").getOrCreate()
 
 
@@ -28,8 +29,41 @@ while True:
     # show the first row
     df.show(1)
 
-    # process 
+    # process
+    result = df.collect()
+    answer = {}
+    # target - insert into postgres (social_media, timestamp, count, unique_count, created_at, updated_at)
+    print("result:")
+    for row in result:
+        try:
+            # parse row value as dict
+            rowValue = eval(row.value)
+            print("rowValue")
+            # print typeof rowValue
+            print(type(rowValue))
+            # parse str to dict
+            rowValue = json.loads(rowValue)
+            print(type(rowValue))
+            # set as dict
+            # get social media with key crawler_target.specific_resource_type
+            social_media = rowValue['item.crawler_target.specific_resource_type']
+            print("social_media")
+            print(social_media)
+
+            created_time = rowValue['item.created_time']
+            print("item.created_time")
+            print(created_time)
+
+            target_name = rowValue['item.crawler_target.target_name']
+            print("item.crawler_target.target_name")
+            print(target_name)
+
+        except Exception as e:
+            print("failed to parse row value")
+            print(e)
+            continue
 
 
 
-    time.sleep(5)
+
+    time.sleep(20)
