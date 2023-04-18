@@ -9,7 +9,7 @@ app.get("/", (req, res) => {
 // get from postgres
 // pg-promise
 const pgp = require("pg-promise")();
-const db = pgp("postgres://postgres:postgres@localhost:5432/mydb");
+const db = pgp("postgres://postgres:postgres@postgres:5432/mydb");
 
 app.get("/example", async (req, res) => {
   const users = await db.any("SELECT * FROM social_media_stats");

@@ -104,15 +104,17 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_DB=mydb
-  # rest:
-  #   container_name: rest
-  #   build:
-  #     context: .
-  #     dockerfile: dockerfiles/rest.Dockerfile
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     - postgres
+  rest:
+    container_name: rest
+    build:
+      context: .
+      dockerfile: dockerfiles/rest.Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./rest:/app
+    depends_on:
+      - postgres
   adminer:
     container_name: adminer
     image: adminer
