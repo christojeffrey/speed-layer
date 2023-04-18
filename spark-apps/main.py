@@ -65,22 +65,18 @@ while True:
             print(e)
             continue
             
-        # TODO: post to postgres
-        # temporary, try to read database db table social_media_stats to check if postgres is working
+    # TODO: post to postgres
+    # example of read
+    # https://spark.apache.org/docs/latest/sql-data-sources-jdbc.html
 
-
-        # url = 'postgresql://postgres:5432/mydb'
-        # properties = {'user': 'postgres', 'password': 'postgres'}
-        # df = spark.read.jdbc(url=url, table='social_media_stats', properties=properties)
-        # df.show(1)
-        jdbcDF = spark.read \
-            .format("jdbc") \
-            .option("url", "jdbc:postgresql://postgres:5432/mydb") \
-            .option("dbtable", "social_media_stats") \
-            .option("user", "postgres") \
-            .option("password", "postgres") \
-            .load()
-        jdbcDF.show(1)
+    jdbcDF = spark.read \
+        .format("jdbc") \
+        .option("url", "jdbc:postgresql://postgres:5432/mydb") \
+        .option("dbtable", "social_media_stats") \
+        .option("user", "postgres") \
+        .option("password", "postgres") \
+        .load()
+    jdbcDF.show(1)
 
 
 
