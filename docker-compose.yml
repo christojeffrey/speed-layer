@@ -51,6 +51,7 @@ services:
       - SPARK_MODE=master
       - SPARK_LOCAL_IP=spark-master
       - SPARK_WORKLOAD=master
+      - SPARK_DRIVER_MEMORY=4G
     depends_on:
       - kafka
       - postgres

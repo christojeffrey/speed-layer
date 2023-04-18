@@ -4,8 +4,10 @@
 from pyspark.sql import SparkSession
 import time
 import json
-spark = SparkSession.builder.appName("spark batch app").getOrCreate()
 
+
+
+spark = SparkSession.builder.appName("spark batch app").getOrCreate()
 
 # df = spark.read.format("kafka").option("kafka.bootstrap.servers", "kafka:9092").option("subscribe", "twitter").load()
 
@@ -62,6 +64,24 @@ while True:
             print("failed to parse row value")
             print(e)
             continue
+            
+        # TODO: post to postgres
+        # temporary, try to read database db table social_media_stats to check if postgres is working
+
+
+        # url = 'postgresql://postgres:5432/mydb'
+        # properties = {'user': 'postgres', 'password': 'postgres'}
+        # df = spark.read.jdbc(url=url, table='social_media_stats', properties=properties)
+        # df.show(1)
+        jdbcDF = spark.read \
+            .format("jdbc") \
+            .option("url", "jdbc:postgresql://postgres:5432/mydb") \
+            .option("dbtable", "social_media_stats") \
+            .option("user", "postgres") \
+            .option("password", "postgres") \
+            .load()
+        jdbcDF.show(1)
+
 
 
 
