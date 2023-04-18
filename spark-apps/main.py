@@ -23,7 +23,13 @@ while True:
     print("last offset: ", last_offset)
 
     # value_deserializer=lambda x: loads(x.decode('utf-8'))
+# key, value, topic, partition, offset, timestamp, timestampType
+    df = df.selectExpr("CAST(value AS STRING)", "CAST(topic AS STRING)", "CAST(partition AS STRING)", "CAST(offset AS STRING)", "CAST(timestamp AS STRING)", "CAST(timestampType AS STRING)")
+    # show the first row
+    df.show(1)
 
-    df = df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
-    df.show()
+    # process 
+
+
+
     time.sleep(5)
