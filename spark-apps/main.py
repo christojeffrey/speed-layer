@@ -1,5 +1,5 @@
 # do batch read from kafka:9092 every 5 minutes, then insert into postgres
-
+CYCLE_TIME = 5 * 60
 # imprt spark
 
 from pyspark.sql import SparkSession
@@ -40,18 +40,13 @@ while True:
 
     # process
     result = df.collect()
-    # target - insert into postgres (social_media, timestamp, count, unique_count, created_at, updated_at)
+    # target - insert into postgres (social_media, media_timestamp, count, unique_count, created_at, updated_at)
     print("result:")
     for row in result:
         try:
             # parse row value as dict
             rowValue = eval(row.value)
-            print("rowValue")
-            # print typeof rowValue
-            print(type(rowValue))
-            # parse str to dict
             rowValue = json.loads(rowValue)
-            print(type(rowValue))
             # set as dict
             # get social media with key crawler_target.specific_resource_type
             social_media = rowValue['item.crawler_target.specific_resource_type']
@@ -169,9 +164,4 @@ while True:
         .save()
     
 
-
-
-
-
-
-    time.sleep(20)
+    time.sleep(CYCLE_TIME)
