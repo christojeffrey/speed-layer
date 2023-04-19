@@ -90,21 +90,18 @@ while True:
             if created_time not in answer[social_media]:
                 answer[social_media][created_time] = {
                     "count": 0,
-                    "unique_count": 0,
                     "created_at": created_time,
-                    "updated_at": created_time
+                    "updated_at": created_time,
+                    "target_name": {}
                 }
                 # add target_name to answer
                 # dictionary of target_name
-                answer[social_media][created_time][target_name] = 1
+                answer[social_media][created_time]["target_name"][target_name] = 1
             
             # increase count
             answer[social_media][created_time]["count"] += 1
-            # increase unique_count based on target_name
-            if target_name not in answer[social_media][created_time]:
-                answer[social_media][created_time]["unique_count"] += 1
-                # add target_name to answer
-                answer[social_media][created_time][target_name] = 1
+
+            answer[social_media][created_time]["target_name"][target_name] = 1
             # update updated_at
             answer[social_media][created_time]["updated_at"] = created_time
 
@@ -146,10 +143,13 @@ while True:
         for created_time in answer[social_media]:
             # add to jdbcDF
             # to string
-            
+            unique_count = len(answer[social_media][created_time]["target_name"])
             data = [(social_media, 
-                    created_time
-                 , answer[social_media][created_time]["count"], answer[social_media][created_time]["unique_count"], answer[social_media][created_time]["created_at"], answer[social_media][created_time]["updated_at"])
+                    created_time,
+                    answer[social_media][created_time]["count"],
+                    unique_count,
+                    answer[social_media][created_time]["created_at"],
+                    answer[social_media][created_time]["updated_at"])
             ]
             jdbcDF = jdbcDF.union(spark.createDataFrame(data, jdbcDF.schema))
     print("jdbcDF")
