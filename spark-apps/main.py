@@ -1,18 +1,30 @@
+
 # do batch read from kafka:9092 every 5 minutes, then insert into postgres
 
 # imprt spark
 from pyspark.sql import SparkSession
+import datetime
 import time
 import json
+import psycopg2
 
+conn = psycopg2.connect(
+   database="mydb",
+    user='postgres',
+    password='postgres',
+    host='postgres',
+    port= '5432'
+)
+conn.autocommit = True
+cursor = conn.cursor()
 
 
 spark = SparkSession.builder.appName("spark batch app").getOrCreate()
 
-# df = spark.read.format("kafka").option("kafka.bootstrap.servers", "kafka:9092").option("subscribe", "twitter").load()
+df = spark.read.format("kafka").option("kafka.bootstrap.servers", "kafka:9092").option("subscribe", "twitter").load()
 
 
-# df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
+df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
 
 # df.show()
 
@@ -46,40 +58,43 @@ while True:
             # parse str to dict
             rowValue = json.loads(rowValue)
             print(type(rowValue))
+            print("rowval", rowValue)
             # set as dict
             # get social media with key crawler_target.specific_resource_type
             social_media = rowValue['item.crawler_target.specific_resource_type']
-            print("social_media")
-            print(social_media)
+            # print("social_media")
+            # print(social_media)
 
             created_time = rowValue['item.created_time']
-            print("item.created_time")
-            print(created_time)
+            # print("item.created_time")
+        #     print(created_time)
 
             target_name = rowValue['item.crawler_target.target_name']
-            print("item.crawler_target.target_name")
-            print(target_name)
+            # print("item.crawler_target.target_name")
+        #     print(target_name)
+
+            timestamp = datetime.datetime.fromtimestamp(created_time).strftime('%Y-%m-%d %H:%M:%S')
+            print("schema ",(social_media,timestamp,1,1,created_time,created_time))
+
+            sql='''insert into social_media_stats(social_media , timestamp ,           
+            count , unique_count, created_at, updated_at) VALUES {};'''.format((social_media,timestamp,1,1,created_time,created_time))
+ 
+            cursor.execute(sql)
+            conn.commit()
+
+            print("select from postgres")
+            sql2='''select * from social_media_stats;'''
+            cursor.execute(sql2)
+            for i in cursor.fetchall():
+                print("from postgres: ",i)
+            conn.commit()
 
         except Exception as e:
             print("failed to parse row value")
             print(e)
             continue
-            
-    # TODO: post to postgres
-    # example of read
-    # https://spark.apache.org/docs/latest/sql-data-sources-jdbc.html
+        
 
-    jdbcDF = spark.read \
-        .format("jdbc") \
-        .option("url", "jdbc:postgresql://postgres:5432/mydb") \
-        .option("dbtable", "social_media_stats") \
-        .option("user", "postgres") \
-        .option("password", "postgres") \
-        .load()
-    jdbcDF.show(1)
-
-
-
-
+    print("Waiting...")
 
     time.sleep(20)

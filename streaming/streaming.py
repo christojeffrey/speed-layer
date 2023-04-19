@@ -43,7 +43,7 @@ def get_stream(URL):
             elif event == 'string':
                 # possible improvement: handle nested prefix. like item.user.name (split by .)
                 currentObject[prefix] = value
-                print("nambah")
+                # print("nambah")
           
 
 
