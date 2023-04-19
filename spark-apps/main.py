@@ -142,15 +142,19 @@ while True:
     for social_media in answer:
         for created_time in answer[social_media]:
             # add to jdbcDF
-            # to string
             unique_count = len(answer[social_media][created_time]["target_name"])
+            # cast created_time to timestamp
+            created_time_timestamp = datetime.datetime.strptime(created_time, "%Y-%m-%dT%H:%M:%S")
+            created_at_timestamp = datetime.datetime.strptime(answer[social_media][created_time]["created_at"], "%Y-%m-%dT%H:%M:%S")
+            updated_at_timestamp = datetime.datetime.strptime(answer[social_media][created_time]["updated_at"], "%Y-%m-%dT%H:%M:%S")
+
             data = [(social_media, 
-                    created_time,
+                    created_time_timestamp,
                     answer[social_media][created_time]["count"],
                     unique_count,
-                    answer[social_media][created_time]["created_at"],
-                    answer[social_media][created_time]["updated_at"])
-            ]
+                    created_at_timestamp,
+                    updated_at_timestamp)]
+            
             jdbcDF = jdbcDF.union(spark.createDataFrame(data, jdbcDF.schema))
     print("jdbcDF")
     jdbcDF.show(5)
