@@ -2,7 +2,7 @@ import express from "express";
 
 const app = express();
 
-app.get("/", (req, res) => {
+app.get("/", (req: any, res: any) => {
   res.send("Well done!");
 });
 
@@ -11,12 +11,12 @@ app.get("/", (req, res) => {
 const pgp = require("pg-promise")();
 const db = pgp("postgres://postgres:postgres@postgres:5432/mydb");
 
-app.get("/example", async (req, res) => {
+app.get("/example", async (req: any, res: any) => {
   const users = await db.any("SELECT * FROM social_media_stats");
   res.send(users);
 });
 
-app.get("/results", async (req, res) => {
+app.get("/results", async (req: any, res: any) => {
   // get start, end, social_media from query params
   const { start, end, social_media }: any = req.query;
   // return them
